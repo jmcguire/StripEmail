@@ -1,0 +1,31 @@
+Quoth Willem <willem@turtle.stack.nl>:
+> 
+> Something like this:
+> 
+>  my $query = App::Request->new();
+> 
+>  my @filenames = grep { defined $query->{uploads}{$_} }
+>    map { $query->param("filepath$_") } ('', 1 .. 9);
+>  my @upload_objs = @{$query->{uploads}}{@filenames};
+> 
+> Note that even though this is more concise, it actually
+> reads the 'uploads' hash twice and might not be as fast.
+
+It's probably better to have one array anyway:
+
+    my @uploads =
+        grep defined $_->{obj},
+        map  +{
+            name    => $_,
+            obj     => $query->{uploads}{$_},
+        },
+        map  $query->param("filepath$_"),
+        "", 1..9;
+
+Unwrapping that into two arrays (if that's really necessary) is then
+just a matter of
+
+    my @filenames   = map $_->{name}, @uploads;
+    my @upload_objs = map $_->{obj}, @uploads;
+
+Ben

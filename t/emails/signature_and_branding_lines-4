@@ -1,0 +1,14 @@
+I see a branding lines that says:
+
+Sent from my BlackBerry
+
+Isn't that weird?
+
+Sent from my iphone
+###EXPECTEDRESULT###
+I see a branding lines that says:
+
+Sent from my BlackBerry
+
+Isn't that weird?
+

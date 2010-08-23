@@ -1,0 +1,109 @@
+NAME
+       Email::StripEmail 0.01 - Removes quoted replies from an email.
+
+SYNOPSIS
+           use Email::StripEmail qw(strip_email strip_email_signature);
+
+           my $email = <<END_OF_EMAIL;
+           On Thursday, Jon wrote:
+           > I bought a new laptop.
+           > I like it.
+
+           That's good!
+
+           --
+           Jim, perlguy
+           END_OF_EMAIL
+
+           my $email_stripped_all = strip_email($email);
+           my $email_stripped_of_sig = strip_email_signature($email);
+
+           # $email_stripped_all is:
+           #
+           #     That's good!
+           #
+           # $email_stripped_of_sig is:
+           #
+           #     On Thusrday, Jon wrote:
+           #     > I bought a new laptop.
+           #     > I like it.
+           #
+           #     That's good!
+           #
+
+DESCRIPTION
+       This software will remove quoted replies, signatures, and branding
+       lines from an email.  (This functionality works similarly to how Google
+       hides quoted replies in Groups and Gmail.)  If you want to only hide
+       one of those nuisances, import just the relevant function.  The
+       available functions are:
+
+           strip_email              <-- imported by default
+           strip_email_quotedreply
+           strip_email_signature
+           strip_email_branding
+
+       Each function takes in one string as an argument, which should be the
+       body of the email.
+
+       Each function returns the modified email.  If it doesn't modify
+       anything, then it will just return the original email.
+
+   strip_email( $email )
+       strip_email basically just executes these three in turn:
+
+           strip_email_signature
+           strip_email_branding
+           strip_email_quotedreply
+
+       It will return any stripped email it comes up with.  It tries stripping
+       everything, but if that doesn't work, then it tries stripping just the
+       signature and branding.
+
+   strip_email_quotedreply( $email )
+       strip_email_quotedreply will only strip out a quoted reply.  It
+       attempts to guess at where an email begins and what quote marks, if
+       any, are used.
+
+       If we find that the sender broke the quoted reply into parts and put
+       comments in between each part, we won't strip anything out.  However,
+       we do try to distinguish between original comments and bad word
+       wrapping, where a word of a quoted email appears on its own line
+       accidentally.
+
+   strip_email_signature( $email )
+       strip_email_signature strips the signature.  It simply looks for the
+       last line we see with just a "--" mark, and cuts everything below it.
+
+   strip_email_branding( $email )
+       strip_email_branding strips the email branding signature that comes
+       from mobile devices.  It looks like this:
+
+           "Sent from my BlackBerry"
+
+       We will only strip one of these, the last one we see.
+
+DIAGNOSTICS
+       "We found a quoted line, but then were unable to find it again."
+
+       This should never be encountered, as it indicates a program bug.
+
+BUGS AND LIMITATIONS
+       Given the vast number of non-standard reply and signature semantics,
+       Email::StripEmail makes a few guesses and assumptions.  These guess and
+        assumptions leaf to logic errors come in two varieties.
+
+        1) In some cases, emails will not have a quoted reply stripped out that should
+           have been.
+        2) More troublesome, and hopefully more rare, sometimes a reply is stripped
+           that includes non-reply information.
+
+AUTHOR
+       Justin McGuire <mcguire.justin@gmail.com>
+
+COPYRIGHT
+         Copyright (c) 2010 Justin McGuire. All rights reserved.
+         This program is free software; you can redistribute it and/or modify it
+         under the same terms as Perl itself.
+
+

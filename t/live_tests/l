@@ -1,0 +1,14 @@
+At 21:09 -0700 4/23/10, Darren Duncan wrote:
+>I think that the most thorough solution is to just take it for granted that there are multiple reference timelines/calendars and that in general it is impossible to reconcile them with each other.
+
+At 15:46 -0700 4/24/10, Darren Duncan wrote:
+>All details specific to any calendar, including Gregorian, including concepts like seconds or hours or days, should be left out of the core and be provided by separate modules.  Said modules can be self-contained, just say using Perl's ordinary numeric and string types for internal representation, and Perl's single core now() routine they can use to determine the current datetime, and the module can introspect its result or calendar() and figure out how to map that to the internal representation or API it wants to use, as well as figure out the proper way to invoke sleep().
+
+At 19:25 -0400 4/24/10, Mark J. Reed wrote:
+>Absolutely ridiculous.  The Gregorian calendar is in universal use for
+>civil purposes and definitely belongs in the core.
+
+Please accept a plug for Darren.
+
+With all of the political and religious problems associated with calendars I would really like to see perl step aside and do ALL of that in modules or perhaps with use of libraries and methods provided by the operating system in which perl is a current process.
+

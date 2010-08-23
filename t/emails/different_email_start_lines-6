@@ -1,0 +1,7 @@
+Quoth Laura <laura@example.com>:
+> I bought a new laptop.
+> I really like it.
+
+That's good!
+###EXPECTEDRESULT###
+That's good!

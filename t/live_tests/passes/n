@@ -1,0 +1,23 @@
+Try it and see.
+
+However, to answer your question, yes it should work fine. Method modifiers are in no way instance specific and they are stored in the metaclass (to be specific the method metaobject, which is stored in the class metaobject). If you do encounter an issues, please submit a bug report.
+
+- Stevan
+
+On Apr 25, 2010, at 10:23 AM, Zbigniew Lukasiak wrote:
+
+> Hi,
+>
+> In the method modifiers POD
+> (http://search.cpan.org/~flora/Moose-1.01/lib/Moose/Manual/MethodModif
+> iers.pod
+> )
+> it is never stated explicitly if method modifiers can be used for 
+> class methods (or if they are suitable only for object methods).  I 
+> would assume that yes - but to be sure I decided to ask here.
+>
+> Cheers,
+> Zbigniew
+> http://brudnopis.blogspot.com/
+> http://perlalchemy.blogspot.com/
+

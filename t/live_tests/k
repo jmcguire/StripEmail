@@ -1,0 +1,20 @@
+Jan Ingvoldstad wrote:
+> On Sun, Apr 25, 2010 at 00:46, Darren Duncan <darren@darrenduncan.net>wrote:
+> 
+> I think you're taking minimalism at least two steps too far; your bikeshed
+> has become too small to contain a bike.
+
+Mark J. Reed wrote:
+> Absolutely ridiculous.  The Gregorian calendar is in universal use for
+> civil purposes and definitely belongs in the core.
+
+Just because things are practically universal or commonly used doesn't 
+necessarily mean they belong in the Perl 6 core.
+
+Granted, many things that are commonly used do belong in the Perl 6 core, when 
+they are relatively simple such as basic generic numbers and strings and 
+collections.
+
+-- Darren Duncan
+
+

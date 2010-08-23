@@ -1,0 +1,89 @@
+
+
+sopan.shewale@gmail.com wrote:
+) I need help to make following code better, the current one looks
+) little odd...
+)
+) -----------
+)
+) my $query = new App::Request();   ##similar to Catalyst::Request
+) my @uploads_objs = ();
+) my @filenames = ();
+)
+) for ( 0 .. 9 ) {
+)         if ( $_ == 0 ) {
+)             if ( defined $query->{uploads}{ $query-
+)>param('filepath') } ) {
+)                 push @upload_objs,
+)                   $query->{uploads}{ $query->param('filepath') };
+)                 push @filenames, $query->param('filepath');
+)             }
+)         }
+)         else {
+)             if ( defined $query->{uploads}{ $query-
+)>param( 'filepath' . $_ ) } )
+)             {
+)                 push @upload_objs,
+)                   $query->{uploads}{ $query->param( 'filepath' .
+) $_ ) };
+)                 push @filenames, $query->param( 'filepath' . $_ );
+)             }
+)         }
+)
+)     }
+) -----------
+)
+) do you think i should define local variables to reduce number of lines/
+) chars in above code?
+
+The loop from 0 to 9 with the special case looks odd to start with.
+You could make a loop on '' and 1 to 9, with ('', 1 .. 9)
+
+Furthermore, local variables would indeed make the code easier to
+read and look less odd.  You're using the same thing three times.
+The same thing, here, is a function call so it would help performance
+as well.
+
+Another thing you could do is to populate the @filenames array first,
+and then use that in a second loop to populate the @uploads_objs array.
+
+Like this:
+
+ my $query = App::Request->new();
+ my @filenames;
+ my @upload_objs;
+
+ for my $num ("", 1 .. 9) {
+   my $filepath = $query->param("filepath$num");
+   my $upload_ob = $query->{uploads}{$filepath};
+   if (defined $upload_ob) {
+     push @filenames, $filepath;
+     push @upload_objs, $upload_ob;
+   }
+ }
+ 
+
+All of this can be done with grep() and map() functions, although that
+is quite a complicated programming style to wrap your head around.
+
+Something like this:
+
+ my $query = App::Request->new();
+
+ my @filenames = grep { defined $query->{uploads}{$_} }
+   map { $query->param("filepath$_") } ('', 1 .. 9);
+ my @upload_objs = @{$query->{uploads}}{@filenames};
+
+Note that even though this is more concise, it actually
+reads the 'uploads' hash twice and might not be as fast.
+
+
+SaSW, Willem
+-- 
+Disclaimer: I am in no way responsible for any of the statements
+            made in the above text. For all I know I might be
+            drugged or something..
+            No I'm not paranoid. You all think I'm paranoid, don't you !
+#EOT
+
+

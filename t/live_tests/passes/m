@@ -1,0 +1,21 @@
+On Sun, Apr 25, 2010 at 02:31, Doug McNutt <douglist@macnauchtan.com> wrote:
+
+> Agree on a format for storing fractional atomic seconds. There are
+> proposals for two word integers with one of them being micro or nano seconds
+> and the other seconds.  I prefer IEEE floating point with atomic seconds as
+> the unit of measure.  That's a bit like MS Excel where days are used for the
+> unit. The Excel scheme is not as clean because it assumes 86400 seconds in a
+> day and it's a day off between what it thinks was Feb 29, 1900 and its epoch
+> at the start of 1900.
+>
+
+The Excel scheme is nowhere as clean as you think it is, because there is no
+_single_ Excel scheme. There are two epochs, one is the buggy 1900 epoch,
+the other is the 1904 epoch. In addition, there's an "extended" date format,
+which doesn't handle the Julian -> Gregorian transition very well.
+
+You'd be hard pressed to find a worse example of how to handle dates than
+Excel.
+-- 
+Jan
+

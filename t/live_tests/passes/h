@@ -1,0 +1,70 @@
+I want to clarify that I currently believe that the Perl 6 core should only 
+include temporal roles and *no* temporal classes.  So the Perl 6 core could 
+provide, say, 3 roles, Instant, Duration, and Calendar (or use some other name 
+for the last one).  It would also provide now(), sleep(), and calendar() 
+routines that have signatures of Instant, Duration, and Calendar, respectively, 
+without necessarily being more specific.
+
+And so, what now() returns would then be entirely implementation-defined; all 
+Perl 6 guarantees is that now() would return some object that does Instant but 
+not what class that object is nor what any of its capabilities are.  Each Perl 6 
+implementation would be responsible for bundling at least one non-core module of 
+its own choice that provides a class for each of the 3 core roles, such that 
+now() can return something on that system.  Or alternately, now() doesn't 
+actually have to work at all, say if this Perl is to run say on some embedded 
+system all of whose programs don't need a clock, in which case no implementing 
+classes are bundled.
+
+The Calendar role would be the role composed by values that you get from 
+introspecting the return value of now() so that you know in a more generic sense 
+what that Instant-doing object is capable of.  You could consult calendar() to 
+introspect what classes now() and sleep() use and know about how to interpret them.
+
+All details specific to any calendar, including Gregorian, including concepts 
+like seconds or hours or days, should be left out of the core and be provided by 
+separate modules.  Said modules can be self-contained, just say using Perl's 
+ordinary numeric and string types for internal representation, and Perl's single 
+core now() routine they can use to determine the current datetime, and the 
+module can introspect its result or calendar() and figure out how to map that to 
+the internal representation or API it wants to use, as well as figure out the 
+proper way to invoke sleep().
+
+-- Darren Duncan
+
+Darren Duncan wrote:
+> Jon Lang wrote:
+>> We _should_ define a "default calendar", which is the one that Perl
+>> uses when returning values from now(), etc.  That is, Perl 6.0.0
+>> should define the Instant and Duration roles as you outlined above,
+>> plus a set of classes that implement those roles according to the
+>> Gregorian calendar system.  If you want to replace that with another
+>> calendar system in your implementation of Perl, the language already
+>> has the means of allowing you to do so (e.g., replacing &now with a
+>> variant that returns a different type of Instant).
+> 
+> I am more on the fence in regards to default implementations of the roles.
+> 
+> But I think that all the messy details of particular calendars, such as 
+> Gregorian leap seconds and timezones etc, should not be bundled with 
+> Perl, and be separate, where users can upgrade them separately 
+> independent of Perl as the measurements and political declarations come in.
+> 
+> I still suggest just letting Perl itself be minimalist as far as 
+> providing classes go, just say have a class representing a Unix et al 
+> timestamp that directly corresponds to the implementation's time system, 
+> which differs per OS, plus a means for a program to ask what the current 
+> OS's calendar is, and then let separately distributed DateTime et al 
+> modules examine this and take care of all the mapping.
+> 
+> For example, Perl 6 should include the analogy of Perl 5's "time" but 
+> not an analogy to "gmtime" or "localtime"; implementing the latter 
+> should be left exclusively to separate modules.
+> 
+> This fits in with a Perl philosophy of mainly sticking to being grammar 
+> and letting CPAN/etc be the language, especially where complexity comes in.
+> 
+> It also means that temporal modules can be bundled with Perl, but that 
+> is a choice made by the Perl packagers, not the Perl core, same as 
+> deciding what templating or networking or database or whatever modules 
+> to bundle.
+

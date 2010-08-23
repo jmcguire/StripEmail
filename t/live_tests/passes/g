@@ -1,0 +1,143 @@
+Jon Lang wrote:
+> Darren Duncan wrote:
+>> I think that the most thorough solution is to just take it for granted that
+>> there are multiple reference timelines/calendars and that in general it is
+>> impossible to reconcile them with each other.
+> 
+> Taking this to its logical extreme, there might be a few (admittedly
+> fringe) cases where someone might want a calendar that, even in
+> principle, cannot be reconciled with anything else: consider someone
+> who's writing an application that tracks events in a fantasy setting,
+> such as the Lord of the Rings or the Wheel of Time.  (Something like
+> this actually occurred with a friend of mine, who's hobby is
+> pen-and-paper roleplaying games; he wanted to build a database to
+> track the events in his campaign, but ran into the problem that
+> nothing allowed for the creation of a custom calendar such as the one
+> in his fictional setting.)
+
+Yes, and in a middle ground between fiction and modern records that we are 
+reasonably confident about are historical records.  For example, "such-and-such 
+happened during the wet season in the 14th year of so-and-so's reign". 
+Often-times we don't know exactly when that was, or even if it was a true 
+account, and so using a distinct reference calendar, say "so-and-so's reign" 
+(actually further qualified), means we have a way of recording exactly what we 
+know without degrading the information by forcing a conversion based on not well 
+known information at the entry stage.
+
+>> And so, what we can do in general is simply have an Instant role and a
+>> Duration role, and pairs of types where each member composes one of those,
+>> and then all that needs to exist for temporal routines is an independent
+>> collection for each pair that is closed within that pair.
+> 
+> This is what I was trying to say.  And where you _can_ convert between
+> calendars, you can always write a "type-casting" routine that takes,
+> say, a Julian Instant as an input and produces a Gregorian Instant as
+> the output.
+
+Yes, we seem to see eye-to-eye here.
+
+> Incidently, it might be possible for two calendar systems to share the
+> same Duration implementation; IIRC, the Julian and Gregorian calendars
+> both use the same concept of seconds, minutes, hours, etc.  Likewise,
+> a calendar system might end up with more than one type of Duration:
+> it's always possible to convert between seconds, minutes, hours, days,
+> and weeks; and its also always possible to convert between months,
+> years, decades, centuries, and millenia; but it isn't always so easy
+> to convert between days and years.  I could see the Gregorian
+> implementation having two kinds of Durations: short Durations that
+> deal with everything from seconds to weeks, and long Durations that
+> deal with everything from months to millennia.
+> 
+>> Similarly, there would be a calendar for "I don't know what calendar", or
+>> varying degrees of such, which is often the case for dated historical
+>> records.
+> 
+> With this, I'm not quite following you.  Could you give an example of
+> what you mean?
+
+There are several variants of this.  See also my first reply paragraph about 
+"the reign".
+
+For example, you could say that such-and-such happened "in Summer of 1406", and 
+you want to record it that way because that's exactly what you know the record 
+says, and having to change this to a specific Gregorian month or day would 
+actually be losing information because you would be claiming more detail as 
+being a recorded fact when it actually isn't; so if someone just records "in 
+Summer ..." then someone looking at it can know better how sure we are or aren't 
+about something.  This isn't to say that we couldn't also record "July of 1406" 
+as a separate related datum, but then the latter would be explicitly annotated 
+as being a shoehorning guess to make some kinds of operations easier, but the 
+other "Summer ..." is all that we actually know.
+
+Or, say we have a date saying "this was at 6:37am on March 1st of 1887"; 
+however, we may not know if they are talking about the Julian or the Gregorian 
+calendar, and so we can't just fix the date into one of those calendars; rather 
+we have to fix it to "I believe it is either Julian or Gregorian but I don't 
+know which", which is a distinct calendar.
+
+Ultimately a system for handling data should be accurate in clarifying what it 
+does or doesn't know, and only claim exactly what it knows and no more.  It 
+needs to be able to distinguish knowing for a fact that something occurred at a 
+specific hour and minute of a specific day on a specific calendar, with 
+considering that information to be more of a guess that they aren't so sure 
+about.  Then, say if one wants to compile records and solve a problem, they can 
+give greater weight regarding details to the records that claim to be more 
+certain about what they are saying versus those that claim to be guesses.
+
+It can be possible to represent degrees of certainty using different calendars.
+
+I'm not really talking about "significant figures" here like with measuring; 
+what I'm talking about goes a lot deeper than that.
+
+My proposal for the Instant and Duration roles themselves and separating those 
+from classes, which you seem to agree with, fully allows for the kind of 
+flexibility I describe while not forcing users to be that flexible.
+
+And most details regarding implementing classes can and should best come from 
+separately distributed modules, including any details about the Gregorian et al 
+calendars, especially when you take into account the need to regularly update 
+our guide data regarding leap seconds or timezones etc.
+
+>> What calendars/timelines are supported can be implementation-defined and/or
+>> provided by modules.  Each Perl 6 implementation can be minimalist as far as
+>> composing classes go; just provide some programmatically readable way to
+>> discover what calendar the system uses so then modules can use that to
+>> decide how to make a particular calendar work on any system as possible.
+> 
+> We _should_ define a "default calendar", which is the one that Perl
+> uses when returning values from now(), etc.  That is, Perl 6.0.0
+> should define the Instant and Duration roles as you outlined above,
+> plus a set of classes that implement those roles according to the
+> Gregorian calendar system.  If you want to replace that with another
+> calendar system in your implementation of Perl, the language already
+> has the means of allowing you to do so (e.g., replacing &now with a
+> variant that returns a different type of Instant).
+
+I am more on the fence in regards to default implementations of the roles.
+
+But I think that all the messy details of particular calendars, such as 
+Gregorian leap seconds and timezones etc, should not be bundled with Perl, and 
+be separate, where users can upgrade them separately independent of Perl as the 
+measurements and political declarations come in.
+
+I still suggest just letting Perl itself be minimalist as far as providing 
+classes go, just say have a class representing a Unix et al timestamp that 
+directly corresponds to the implementation's time system, which differs per OS, 
+plus a means for a program to ask what the current OS's calendar is, and then 
+let separately distributed DateTime et al modules examine this and take care of 
+all the mapping.
+
+For example, Perl 6 should include the analogy of Perl 5's "time" but not an 
+analogy to "gmtime" or "localtime"; implementing the latter should be left 
+exclusively to separate modules.
+
+This fits in with a Perl philosophy of mainly sticking to being grammar and 
+letting CPAN/etc be the language, especially where complexity comes in.
+
+It also means that temporal modules can be bundled with Perl, but that is a 
+choice made by the Perl packagers, not the Perl core, same as deciding what 
+templating or networking or database or whatever modules to bundle.
+
+-- Darren Duncan
+
+

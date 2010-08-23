@@ -1,0 +1,12 @@
+On Sat, May 29, 2010 at 3:37 PM, Shawn H Corey <shawnhcorey@gmail.com> wrote:
+> Hi,
+>
+> Is the a standard methodology for persistent objects in Moose using SQL?
+
+Well, if you want to serialize objects as they are, you might want to consider just using KiokuDB with the DBI backend [1]
+
+--
+   Oliver Charles / aCiD2
+
+1: http://search.cpan.org/~nuffin/KiokuDB/
+

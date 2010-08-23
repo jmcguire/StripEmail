@@ -1,0 +1,37 @@
+>>>>>  "G" == Geoff  <ge...@invalid.invalid>  writes:
+
+  G> On Sun, 09 May 2010 13:28:59 -0400, "Uri Guttman"
+  G> <u...@StemSystems.com> wrote:
+
+  PJH> He wants to find the newest instance and copy that to a target
+  PJH> directory, so if the target directory is named /target/, baz.text will
+  PJH> always be copied to /target/baz.text, regardless where it was found.
+  PJH> No mkpath necessary.
+  >>
+  >> if you could find a logical statement from the OP which claims that
+  >> goal, more power to you! :)
+
+  G> uri
+
+  G> How about my first posting?
+
+  >> I have a series of files called c1_1.mp4 to c1_120.mp4 which are
+  >> spread over several folders.
+
+  >> I would like to be able to copy the most recent version of each file
+  >> to new folder.
+
+  G> Is that not clear?
+
+nope. not by a long shot. it doesn't say anything about paths which has
+been a part of this thread. a bulletproof requirements and spec is a lot
+harder than you realize. it is effectly defining the results you want
+with all possible data issues taken into consideration. what if a newer
+version by date is actually an empty file? there are so many little nits
+to deal with in even the seemingly smallest problems. this is called
+analysis and why early programming jobs were called data analysts. i
+wish that title was in use again as it is one of the most important and
+ignore part of programming jobs.
+
+uri
+

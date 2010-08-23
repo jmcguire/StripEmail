@@ -1,0 +1,21 @@
+L> I bought a new laptop.
+L> I really like it because
+L> it plays music.
+
+That's good!
+
+A> I just bought a laptop too,
+A> but I just like video.
+
+Everyone's buying laptops.
+###EXPECTEDRESULT###
+L> I bought a new laptop.
+L> I really like it because
+L> it plays music.
+
+That's good!
+
+A> I just bought a laptop too,
+A> but I just like video.
+
+Everyone's buying laptops.

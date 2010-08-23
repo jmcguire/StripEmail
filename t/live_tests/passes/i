@@ -1,0 +1,26 @@
+On Sun, Apr 25, 2010 at 00:46, Darren Duncan <darren@darrenduncan.net>wrote:
+
+> All details specific to any calendar, including Gregorian, including
+> concepts like seconds or hours or days, should be left out of the core and
+> be provided by separate modules.  Said modules can be self-contained, just
+> say using Perl's ordinary numeric and string types for internal
+> representation, and Perl's single core now() routine they can use to
+> determine the current datetime, and the module can introspect its result or
+> calendar() and figure out how to map that to the internal representation or
+> API it wants to use, as well as figure out the proper way to invoke sleep().
+>
+
+I think you're taking minimalism at least two steps too far; your bikeshed
+has become too small to contain a bike.
+
+A standard library can and should provide reasonable functionality.
+
+We _know_ that the North-Western civilizations' common understanding of time
+(calendars and time-of-day), as defined in various standards, are
+fundamental to how we handle a lot of programming problems.
+
+I don't see any good reason not to provide the basic functionality needed,
+and especially not when it's already there.
+-- 
+Jan
+

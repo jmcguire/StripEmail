@@ -1,0 +1,53 @@
+I think the developers of Perl 6 would do everybody a big favor by renaming 
+it.   Calling it Perl 6 implies something that increasingly doesn't seem to 
+be true, and inhibits interest in and active development of Perl 5.
+
+
+----- Original Message ----- 
+From: "Tom Metro" <tmetro-boston.pm@vl.com>
+To: "Ronald J Kimball" <rjk@tamias.net>
+Cc: "L-boston-pm" <boston-pm@mail.pm.org>
+Sent: 05/06/2010 9:32 PM
+Subject: Spam:*, Re: [Boston.pm] Perl 5 to Perl 6 evolution
+
+
+Ronald J Kimball wrote:
+> Tom Metro wrote:
+>> It seems less and less likely that there will be a definitive cut-over
+>> point where a pure Perl 6 code base will be released.
+>>
+>> Instead is seems like they will asymptotically approach the Perl 6 spec
+>> through incremental releases of Perl 5. That seems like a sound
+>> strategy, but could make implementing internal architecture changes
+>> rather challenging.
+>
+> I think you have some misconceptions about the relationship between Perl 5
+> and Perl 6.  Perl 6 is essentially a new language that happens to
+> share some history and syntax with Perl 1-5.
+
+I realize that Perl 6, both from a language design and internal
+architecture perspective, was always intended to be a ground-up redesign.
+
+However, the ideals of a plan and the practical reality don't always
+match up. There isn't exactly a production-ready Perl 6, or even
+anything close to it, to make the case that a pure Perl 6 is a viable
+alternative to evolving Perl 5.
+
+I'd rather see the products of the Perl 6 "blue sky" design end up being
+incorporated into Perl 5, than to have those ideas effectively shelved
+waiting for a Perl 6 platform that may never adequately materialize.
+
+
+> The ongoing development of Perl 5 is not aimed at implementing
+> the Perl 6 spec.
+
+That may not be the primary goal, but it seems to be what is happening
+for the past few releases.
+
+  -Tom
+
+-- 
+Tom Metro
+Venture Logic, Newton, MA, USA
+"Enterprise solutions through open source."
+Professional Profile: http://tmetro.venturelogic.com/
