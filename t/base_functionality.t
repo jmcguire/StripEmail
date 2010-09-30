@@ -45,6 +45,9 @@ foreach my $test_dir (<test_*>) {
     run_tests($tests);
 }
 
+exit;
+
+
 ## given a directory, look in it for test emails, and build an array of TestEmails
 sub get_test_emails_from_dir
 {
@@ -55,6 +58,7 @@ sub get_test_emails_from_dir
     my @tests;
     
     foreach my $file (<$dir/*>) {
+#next unless $file =~ /quoting_marks-/;
         my $all = read_file($file);
         my ($email, $result) = $all =~ /^(.+)###EXPECTEDRESULT###(.+)$/s;
         
