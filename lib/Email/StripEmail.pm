@@ -102,6 +102,8 @@ sub strip_email
 {
     my ($body) = @_;
 
+    return unless $body;
+
     my @new_body = split(/\n/, $body);
 
     ## first try the two easy things to strip
@@ -195,7 +197,7 @@ sub strip_email_branding
     my ($body) = @_;
 
     my @new_body = split(/\n/, $body);
-    @new_body = _strip_signature(@new_body);
+    @new_body = _strip_branding(@new_body);
     my $new_body = join("\n",@new_body);
 
     ## strip empty lines at the beginning and end
@@ -232,7 +234,7 @@ sub _strip_branding
     my @body = @_;
 
     foreach (reverse @body) {
-        s/^\s*Sent from my (?:iPhone|BlackBerry|Mobile Phone)\s*$/$REMOVED_BRANDING_MESSAGE/
+        s/^\s*Sent from my (?:iPhone|BlackBerry|Mobile Phone)\s*$/$REMOVED_BRANDING_MESSAGE/i
             and return @body;
     }
 
@@ -257,8 +259,8 @@ sub _strip_quoted_reply
             and $quoted_indicies[-1] == $quoted_indicies[0] + $#quoted_indicies
         ) {
             ## strip everything from the original begining through all the lines
-            ## with the > marks (remember that the indicies in @quoted_indicies
-            ## are offset by $header_last)
+            ## with the quote marks (remember that the indicies in
+            ## @quoted_indicies are offset by $header_last)
             splice(@body,
                    $quoted_indicies[0],
                    $quoted_indicies[-1] - $quoted_indicies[0] + 1,
@@ -293,13 +295,14 @@ sub _strip_quoted_reply
     ## if we didn't find any quote marks, just remove the entire bottom of the
     ## message and return
     unless ($quote_mark) {
-        splice(@body, $orig_begin, $#body-$orig_begin, $REMOVED_EMAIL_MESSAGE);
+        splice(@body, $orig_begin, $#body-$orig_begin+1, $REMOVED_EMAIL_MESSAGE);
         return @body;
     }
 
+    #$header_last++ if ($header_last == $orig_begin);
     my @quoted_indicies = _quoted_line_indicies($quote_mark,
                                                 @body[$header_last..$#body]);
-
+    
     ## just in case something has gone horribly wrong
     unless (@quoted_indicies) {
         carp "We found a quoted line, but then were unable to find it again.";
@@ -310,7 +313,9 @@ sub _strip_quoted_reply
     ## Test that the line numbers of the reply are contiguous.  (If there's a
     ## missing line, that means a person put a comment into the middle of a
     ## quoted reply.)
-    if ($quoted_indicies[0] == 1 and _contiguous_numbers(\@quoted_indicies)) {
+    ## ($quoted_indicies[0] will be 0 if the orig_begin line begins with our
+    ##  found quote mark. otherwise we're looking for $quoted_indicies[0] == 1)
+    if ($quoted_indicies[0] <= 1 and _contiguous_numbers(\@quoted_indicies)) {
         ## strip everything from the original begining through all the lines
         ## with the quote marks (remember that the indicies in @quoted_indicies
         ## are offset by $header_last)
@@ -339,16 +344,19 @@ sub _reply_message_start
     ## look for a line that indicates the beginning of the original email
     my @msg_start_lines = ( '^----- ?Original Message ?-----$', ## Outlook
                             '^_{32}$',                          ## also Outlook
-                            '\bwrote:$',                        ## Mail.app, Gmail
-                            '\bwrites?:$',                      ## clever people
-                            'Quoth .+:$',                       ## some bastard
+                            '\bwrote:\s*$',                     ## Mail.app, Gmail
+                            '\bwrites?:\s*$',                   ## clever people
+                            'Quoth .+:\s*$',                    ## some bastard
+                            '^\s*In article .+ says\.{3}\s*$',  ## custom
                             );
     my $msg_start_lines_regexp = join('|', @msg_start_lines);
+    #print "REGEXP: $msg_start_lines_regexp\n\n";
 
     ## now we try to identify the original email
     my $orig_begin;
     for ($orig_begin = 0; $orig_begin < @body; $orig_begin++) {
-        last if $body[$orig_begin] =~ /$msg_start_lines_regexp/o;
+        last if $body[$orig_begin] =~ /$msg_start_lines_regexp/;
+        last if $body[$orig_begin] =~ /^\s*From:/;
     }
 
     ## return the index if it makes sense, otherwise -1
@@ -366,7 +374,7 @@ sub _quote_mark
     ## (possible quote mark are things like ">", "%", "jm>", "mark!")
     ## (should we be ignoring likely code comments, like # and /* ?)
     my %mark_count;
-    /^ ( \s* \w* [^\d\w\s] ) /x and $mark_count{$1}++ foreach @body;
+    /^ ( \s* \w* [^'"\d\w\s] ) /x and $mark_count{$1}++ foreach @body;
 
     return '' unless %mark_count;
 
@@ -394,7 +402,7 @@ sub _quoted_line_indicies
     my @quoted_indicies;
     for (my $i = 0; $i < @body; $i++) {
         ## keep track of the line indicies we found
-        push (@quoted_indicies, $i) and next if $body[$i] =~ /^\Q$quote_mark/o;
+        push (@quoted_indicies, $i) and next if $body[$i] =~ /^\Q$quote_mark/;
 
         ## look for bad wrapping, where a non-quoted word really is part of the 
         ## quoted text, but accidentally ended up on the next line due to
@@ -403,9 +411,9 @@ sub _quoted_line_indicies
         ## (note: this will also look for empty lines between quoted reply
         ## fragments.)
         push (@quoted_indicies, $i) and next
-            if (     $body[$i-1] =~ /^\Q$quote_mark/o
-                 and $body[$i]   =~ /^\S*\s*$/o
-                 and $body[$i+1] =~ /^\Q$quote_mark/o
+            if (     $body[$i-1] and $body[$i-1] =~ /^\Q$quote_mark/
+                 and $body[$i]   and $body[$i]   =~ /^\S*\s*$/
+                 and $body[$i+1] and $body[$i+1] =~ /^\Q$quote_mark/
                );
     } 
 
