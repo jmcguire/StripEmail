@@ -10,3 +10,6 @@ Well, if you want to serialize objects as they are, you might want to consider j
 
 1: http://search.cpan.org/~nuffin/KiokuDB/
 
+###EXPECTEDRESULT###
+Well, if you want to serialize objects as they are, you might want to consider just using KiokuDB with the DBI backend [1]
+

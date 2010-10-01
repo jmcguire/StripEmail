@@ -21,3 +21,10 @@ On Apr 25, 2010, at 10:23 AM, Zbigniew Lukasiak wrote:
 > http://brudnopis.blogspot.com/
 > http://perlalchemy.blogspot.com/
 
+###EXPECTEDRESULT###
+Try it and see.
+
+However, to answer your question, yes it should work fine. Method modifiers are in no way instance specific and they are stored in the metaclass (to be specific the method metaobject, which is stored in the class metaobject). If you do encounter an issues, please submit a bug report.
+
+- Stevan
+

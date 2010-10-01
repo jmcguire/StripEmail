@@ -84,3 +84,70 @@ recognize that they are doing so.
 -- Darren Duncan
 
 
+###EXPECTEDRESULT###
+I think that the most thorough solution is to just take it for granted that 
+there are multiple reference timelines/calendars and that in general it is 
+impossible to reconcile them with each other.
+
+And so, what we can do in general is simply have an Instant role and a Duration 
+role, and pairs of types where each member composes one of those, and then all 
+that needs to exist for temporal routines is an independent collection for each 
+pair that is closed within that pair.
+
+Each instant simply says, "I am this point on this particular 
+timeline/calendar", and not try to imply that it is anything against any other 
+calendar.
+
+For example, each instant is only a datetime in the Gregorian or Julian or 
+Muslim or Jewish or TAI-1958 or TAI-1970s or whatever.
+
+This may result in a proliferation of calendars, but that can be blunted 
+somewhat anywhere there are multiple measuring systems that are guaranteed to be 
+commonly-defined.
+
+Similarly, there would be a calendar for "I don't know what calendar", or 
+varying degrees of such, which is often the case for dated historical records.
+
+So all Perl 6 really needs to define is:
+
+1.  There is an Instant role and a Duration role.
+
+2.  A Duration is an amount of time that isn't fixed on a timeline; to get 
+something fixed on a timeline, use a Range of Instant.
+
+3.  The system routine now()/etc returns a value of some Instant-composing class.
+
+4.  The Instant/Duration roles define functions like these:
+
+abs Duration -> Duration
+Duration + Duration -> Duration
+Duration - Duration -> Duration
+Duration abs_diff Duration -> Duration
+Duration * Numeric -> Duration
+Duration / Numeric -> Duration
+Instant - Instant -> Duration
+Instant abs_diff Instant -> Duration
+Instant + Duration -> Instant
+Instant - Duration -> Instant
+
+5.  There are absolutely no attributes defined by the Instant or Duration roles; 
+attributes are defined entirely by the specific implementing classes, or other 
+roles that they compose which compose Instant or Duration etc.  There is no 
+concept of years/days/etc in Instant or Duration.  We might be counting time on 
+Mars for example, so no Terra-centricity.
+
+So, basically like that.
+
+It keeps the core very simple and we avoid most of the bikeshedding seen so far.
+
+What calendars/timelines are supported can be implementation-defined and/or 
+provided by modules.  Each Perl 6 implementation can be minimalist as far as 
+composing classes go; just provide some programmatically readable way to 
+discover what calendar the system uses so then modules can use that to decide 
+how to make a particular calendar work on any system as possible.
+
+This brings up a new discussion point though:  We should come out with a list of 
+distinct timelines/calendars and canonical names for them with respect to Perl 
+6.  So to at least help those who are trying to use the exact same calendar to 
+recognize that they are doing so.
+

@@ -27,3 +27,9 @@ mysql.
 >uri
 >
 
+###EXPECTEDRESULT###
+Yes I am using perl DBI for sqlserver too (freetds is the DBD
+driver which makes possible to use it on unix). Basically
+it is fetchrow_array from sqlserver and pass that array to
+mysql.
+

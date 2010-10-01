@@ -99,3 +99,82 @@ StartApp="" Bal="5" sessInt="500" WaterMark="1.0"/>
 <AppProfileGuid>586e3456dt</AppProfileGuid>
 
 </Profile>
+###EXPECTEDRESULT###
+If what you need is all you state,
+this code should fix up your xml.
+Its restricted to just single tag-attribute pair.
+It works by parsing exclusionary and specific markup.
+
+The advantage here is that nothing else changes in the
+original markup, only the string content of Id is changed
+via the replacement side of the regex.
+This avoids formatting headaches with some writers.
+
+The regex may look simple for a parser, thats becuse it
+is custom to the specific task.
+The markup interraction is correct.
+
+-sln
+
+# -------------------------------------------
+# rx_xml_fixval.pl
+# -sln, 5/2/2010
+# 
+# Util to extract some attribute/val's from
+# xml/xhtml
+# -------------------------------------------
+
+use strict;
+use warnings;
+
+##
+ my $rxopen  = "(?: Application )"; # Open tag , cannot be empty alternation
+ my $rxattr  = "(?: Id )";          # Attribute we seek, cannot have an empty alternation
+
+ my $Rxmarkup = qr/
+   [^<]*
+   (?:
+      # Things that hide markup
+      (?: <! (?:  \[CDATA\[.*?\]\] | --.*?-- | \[[A-Z][A-Z\ ]*\[.*?\]\] ) > ) \K
+      |
+      # Specific markup
+      (?: < (?<OPEN> $rxopen ) \s+[^>]*? (?<=\s) (?<ATTR> $rxattr) \s*=\s* \K(?<VAL> ".+?"|'.+?')
+          (?= [^>]*? \s* \/? > )
+      )
+   )
+   |
+   < \K
+ /xs;
+
+##
+ my $html = join '', <DATA>;
+ $html =~ s/ $Rxmarkup/ fixval( $+{VAL} ) /eg;
+ print "\n",$html;
+
+ exit (0);
+
+##
+sub fixval {
+    return '' unless defined $_[0];
+    if ($_[0] =~ / \/ \s* (?<val>[^\/]+?) \s* (?<delim>["']) $/x) {
+        return "$+{delim}$+{val}$+{delim}";
+    } 
+    return $_[0];
+}
+
+
+__DATA__
+
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+
+<Profile xmlns="xxxxxxxxx" name="" version="1.1" xmlns:xsi="http://
+www.w3.org/2001/XMLSchema-instance">
+
+
+	<Application Name="App1" Id="/Local/App/App1" Services="1" policy=""
+StartApp="" Bal="5" sessInt="500" WaterMark="1.0"/>
+
+
+<AppProfileGuid>586e3456dt</AppProfileGuid>
+
+</Profile>

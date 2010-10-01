@@ -19,3 +19,12 @@ Excel.
 -- 
 Jan
 
+###EXPECTEDRESULT###
+The Excel scheme is nowhere as clean as you think it is, because there is no
+_single_ Excel scheme. There are two epochs, one is the buggy 1900 epoch,
+the other is the 1904 epoch. In addition, there's an "extended" date format,
+which doesn't handle the Julian -> Gregorian transition very well.
+
+You'd be hard pressed to find a worse example of how to handle dates than
+Excel.
+

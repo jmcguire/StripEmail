@@ -24,3 +24,16 @@ and especially not when it's already there.
 -- 
 Jan
 
+###EXPECTEDRESULT###
+I think you're taking minimalism at least two steps too far; your bikeshed
+has become too small to contain a bike.
+
+A standard library can and should provide reasonable functionality.
+
+We _know_ that the North-Western civilizations' common understanding of time
+(calendars and time-of-day), as defined in various standards, are
+fundamental to how we handle a lot of programming problems.
+
+I don't see any good reason not to provide the basic functionality needed,
+and especially not when it's already there.
+

@@ -29,3 +29,22 @@ just a matter of
     my @upload_objs = map $_->{obj}, @uploads;
 
 Ben
+###EXPECTEDRESULT###
+It's probably better to have one array anyway:
+
+    my @uploads =
+        grep defined $_->{obj},
+        map  +{
+            name    => $_,
+            obj     => $query->{uploads}{$_},
+        },
+        map  $query->param("filepath$_"),
+        "", 1..9;
+
+Unwrapping that into two arrays (if that's really necessary) is then
+just a matter of
+
+    my @filenames   = map $_->{name}, @uploads;
+    my @upload_objs = map $_->{obj}, @uploads;
+
+Ben

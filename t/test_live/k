@@ -18,3 +18,14 @@ collections.
 -- Darren Duncan
 
 
+###EXPECTEDRESULT###
+Just because things are practically universal or commonly used doesn't 
+necessarily mean they belong in the Perl 6 core.
+
+Granted, many things that are commonly used do belong in the Perl 6 core, when 
+they are relatively simple such as basic generic numbers and strings and 
+collections.
+
+-- Darren Duncan
+
+
