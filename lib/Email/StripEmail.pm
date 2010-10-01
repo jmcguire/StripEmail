@@ -9,7 +9,7 @@ Email::StripEmail - Removes quoted replies from an email.
 
 =head1 VERSION
 
-version 0.01
+version 0.50
 
 =cut
 
@@ -19,7 +19,7 @@ our @EXPORT    = qw( strip_email );
 our @EXPORT_OK = qw( strip_email_quotedreply
                      strip_email_signature
                      strip_email_branding );
-our $VERSION = '0.01'; 
+our $VERSION = '0.50'; 
 
 #use List::Util qw/first/;
 
@@ -78,8 +78,8 @@ just the relevant function.  The available functions are:
 Each function takes in one string as an argument, which should be the body of
 the email.
 
-Each function returns the modified email.  If it doesn't modify anything, then
-it will just return the original email.
+Each function returns one string, the modified email.  If it doesn't modify
+anything, then it will just return the original email.
 
 =cut
 
@@ -207,11 +207,19 @@ sub strip_email_branding
     return $new_body;
 } 
 
-##
-## Supporting functions
-##
+=head1 PRIVATE SUBROUTINES
 
-## look for a traditional signature, and remove it
+The following subroutines are not exported.
+
+=cut
+
+=head2 _strip_signature( @email )
+
+Look for a traditional signature, and remove it. This is what
+strip_email_signature wraps around.
+
+=cut
+
 sub _strip_signature
 {
     my @body = @_;
@@ -228,7 +236,12 @@ sub _strip_signature
 }
 
 
-## remove common branding signatures
+=head2 _strip_branding( @email )
+
+Remove common branding signatures
+
+=cut
+
 sub _strip_branding
 {
     my @body = @_;
@@ -242,7 +255,29 @@ sub _strip_branding
 }
 
 
-## identify and strip the quoted reply
+=head2 _strip_quoted_reply( @email )
+
+Identify and strip the quoted reply
+
+This function is built around finding the quoted message, we have a few
+variables to keep track of certain items. Among them are orig_begin, which
+points to where the quote begins, and header_last, which points to the last line
+of the quote headers (which don't always exist).
+
+Here are a couple examples:
+
+   On Thursday, Justin wrote:   <-- $orig_begin, $header_last
+   > Hello
+   > I also like music.
+
+   From: Amy                    <-- $orig_begin
+   To: Steve
+   Subject: Hello People!       <-- $header_last
+   > Hello Steve,
+   > How are you?
+
+=cut
+
 sub _strip_quoted_reply
 {
     my @body = @_;
@@ -313,8 +348,6 @@ sub _strip_quoted_reply
     ## Test that the line numbers of the reply are contiguous.  (If there's a
     ## missing line, that means a person put a comment into the middle of a
     ## quoted reply.)
-    ## ($quoted_indicies[0] will be 0 if the orig_begin line begins with our
-    ##  found quote mark. otherwise we're looking for $quoted_indicies[0] == 1)
     if ($quoted_indicies[0] <= 1 and _contiguous_numbers(\@quoted_indicies)) {
         ## strip everything from the original begining through all the lines
         ## with the quote marks (remember that the indicies in @quoted_indicies
@@ -335,8 +368,13 @@ sub _strip_quoted_reply
 }
 
 
-## returns the index of where the quoted message begins
-## if it can't find it, return -1
+=head2 _reply_message_start( @email )
+
+Returns the index of where the quoted message begins. If we can't find it,
+return -1.
+
+=cut
+
 sub _reply_message_start
 {
     my @body = @_;
@@ -364,8 +402,13 @@ sub _reply_message_start
 }
 
 
-## find the most likely quote mark
-## if nothing good is found, we return an empty string
+=head2 _quote_mark( @email )
+
+Find the most likely quote mark. If nothing good is found, we return an empty
+string.
+
+=cut
+
 sub _quote_mark
 {
     my @body = @_;
@@ -390,10 +433,16 @@ sub _quote_mark
 }
 
 
-## takes in the quote mark character, and the lines of the body that you want
-## checked.
-## returns an array of numbers, these are indicies of lines (from the input)
-## that are part of the reply message
+=head2 _quoted_line_indicies( $quote_mark, @email )
+
+Takes in the quote mark character, and the lines of the body that you want
+checked.
+
+Returns an array of numbers, these are indicies of lines (from the input) that
+are part of the reply message
+
+=cut
+
 sub _quoted_line_indicies
 {
     my ($quote_mark, @body) = @_;
@@ -420,11 +469,22 @@ sub _quoted_line_indicies
     return @quoted_indicies;
 }
 
-## given a list of numbers, this tell you whether the numbers are contiguous
-## returns boolean, 1 or 0
+=head2 _contiguous_numbers( $list_of_numbers )
+
+Given a list of numbers, this tell you whether the numbers are contiguous.
+
+Returns boolean, 1 or 0.
+
+=cut
+
 sub _contiguous_numbers
 {
     my ($list_of_numbers) = @_;
+
+    ## we just test if last number = first number + array size.
+    ## note: this trick only works if there are no duplicates, and the numbers
+    ## are ordered
+
     return $list_of_numbers->[-1] == $list_of_numbers->[0] + $#$list_of_numbers ? 1 : 0;
 }
 
